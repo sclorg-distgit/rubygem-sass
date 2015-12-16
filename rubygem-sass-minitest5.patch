@@ -1,0 +1,1091 @@
+diff --git a/test/sass/cache_test.rb b/test/sass/cache_test.rb
+index 90a8d2d..87e7c1d 100755
+--- a/test/sass/cache_test.rb
++++ b/test/sass/cache_test.rb
+@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
+ require File.dirname(__FILE__) + '/test_helper'
+ require 'sass/engine'
+ 
+-class CacheTest < Test::Unit::TestCase
++class CacheTest < Minitest::Test
+   @@cache_dir = "tmp/file_cache"
+ 
+   def setup
+diff --git a/test/sass/callbacks_test.rb b/test/sass/callbacks_test.rb
+index b0a2081..6573a04 100755
+--- a/test/sass/callbacks_test.rb
++++ b/test/sass/callbacks_test.rb
+@@ -26,7 +26,7 @@ module ClassLevelCallerBack
+   end
+ end
+ 
+-class SassCallbacksTest < Test::Unit::TestCase
++class SassCallbacksTest < Minitest::Test
+   def test_simple_callback
+     cb = CallerBack.new
+     there = false
+diff --git a/test/sass/compiler_test.rb b/test/sass/compiler_test.rb
+index 9c8d1c8..b96e5b1 100755
+--- a/test/sass/compiler_test.rb
++++ b/test/sass/compiler_test.rb
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env ruby
+-require 'test/unit'
++require 'minitest/autorun'
+ require File.dirname(__FILE__) + '/../test_helper'
+ require 'sass/plugin'
+ require 'sass/plugin/compiler'
+ 
+-class CompilerTest < Test::Unit::TestCase
++class CompilerTest < Minitest::Test
+   class FakeListener
+     attr_accessor :options
+     attr_accessor :directories
+diff --git a/test/sass/conversion_test.rb b/test/sass/conversion_test.rb
+index 3e270b2..3f741af 100755
+--- a/test/sass/conversion_test.rb
++++ b/test/sass/conversion_test.rb
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env ruby
+ require File.dirname(__FILE__) + '/../test_helper'
+ 
+-class ConversionTest < Test::Unit::TestCase
++class ConversionTest < Minitest::Test
+   def test_basic
+     assert_renders <<SASS, <<SCSS
+ foo bar
+@@ -1367,7 +1367,7 @@ SCSS
+   end
+ 
+   def test_disallowed_colon_hack
+-    assert_raise_message(Sass::SyntaxError, 'The ":name: val" hack is not allowed in the Sass indented syntax') do
++    assert_raises_message(Sass::SyntaxError, 'The ":name: val" hack is not allowed in the Sass indented syntax') do
+       to_sass("foo {:name: val;}", :syntax => :scss)
+     end
+   end
+diff --git a/test/sass/css2sass_test.rb b/test/sass/css2sass_test.rb
+index eadba9e..b443578 100755
+--- a/test/sass/css2sass_test.rb
++++ b/test/sass/css2sass_test.rb
+@@ -1,9 +1,9 @@
+ #!/usr/bin/env ruby
+-require 'test/unit'
++require 'minitest/autorun'
+ require File.dirname(__FILE__) + '/../test_helper'
+ require 'sass/css'
+ 
+-class CSS2SassTest < Test::Unit::TestCase
++class CSS2SassTest < Minitest::Test
+   def test_basic
+     css = <<CSS
+ h1 {
+diff --git a/test/sass/engine_test.rb b/test/sass/engine_test.rb
+index 236624a..b7ec217 100755
+--- a/test/sass/engine_test.rb
++++ b/test/sass/engine_test.rb
+@@ -26,7 +26,7 @@ module Sass::Script::Functions
+   include Sass::Script::Functions::UserFunctions
+ end
+ 
+-class SassEngineTest < Test::Unit::TestCase
++class SassEngineTest < Minitest::Test
+   FAKE_FILE_NAME = __FILE__.gsub(/rb$/,"sass")
+   # A map of erroneous Sass documents to the error messages they should produce.
+   # The error messages may be arrays;
+@@ -232,7 +232,7 @@ MSG
+   end
+ 
+   def test_import_same_name_different_ext
+-    assert_raise_message Sass::SyntaxError, <<ERROR do
++    assert_raises_message Sass::SyntaxError, <<ERROR do
+ It's not clear which file to import for '@import "same_name_different_ext"'.
+ Candidates:
+   same_name_different_ext.sass
+@@ -246,7 +246,7 @@ ERROR
+   end
+ 
+   def test_import_same_name_different_partiality
+-    assert_raise_message Sass::SyntaxError, <<ERROR do
++    assert_raises_message Sass::SyntaxError, <<ERROR do
+ It's not clear which file to import for '@import "same_name_different_partiality"'.
+ Candidates:
+   _same_name_different_partiality.scss
+@@ -496,7 +496,7 @@ SASS
+     engine = Sass::Engine.new('@import "foo"', :filename => filename_for_test,
+       :load_paths => [importer], :importer => importer)
+ 
+-    assert_raise_message(Sass::SyntaxError, <<ERR.rstrip) {engine.render}
++    assert_raises_message(Sass::SyntaxError, <<ERR.rstrip) {engine.render}
+ An @import loop has been found:
+     #{filename_for_test} imports foo
+     foo imports bar
+@@ -513,7 +513,7 @@ ERR
+     engine = Sass::Engine.new('@import "foo"', :filename => filename_for_test,
+       :load_paths => [importer], :importer => importer)
+ 
+-    assert_raise_message(Sass::SyntaxError, <<ERR.rstrip) {engine.render}
++    assert_raises_message(Sass::SyntaxError, <<ERR.rstrip) {engine.render}
+ An @import loop has been found:
+     #{filename_for_test} imports foo
+     foo imports bar
+@@ -673,7 +673,7 @@ SASS
+   end
+ 
+   def test_nonexistent_import
+-    assert_raise_message(Sass::SyntaxError, <<ERR.rstrip) do
++    assert_raises_message(Sass::SyntaxError, <<ERR.rstrip) do
+ File to import not found or unreadable: nonexistent.sass.
+ Load path: #{Dir.pwd}
+ ERR
+@@ -682,7 +682,7 @@ ERR
+   end
+ 
+   def test_nonexistent_extensionless_import
+-    assert_raise_message(Sass::SyntaxError, <<ERR.rstrip) do
++    assert_raises_message(Sass::SyntaxError, <<ERR.rstrip) do
+ File to import not found or unreadable: nonexistent.
+ Load path: #{Dir.pwd}
+ ERR
+@@ -1684,7 +1684,7 @@ SASS
+   end
+ 
+   def test_argument_error
+-    assert_raise(Sass::SyntaxError) { render("a\n  b: hsl(1)") }
++    assert_raises(Sass::SyntaxError) { render("a\n  b: hsl(1)") }
+   end
+ 
+   def test_comments_at_the_top_of_a_document
+@@ -2704,7 +2704,7 @@ SASS
+   end
+ 
+   def test_mixin_no_arg_error
+-    assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "($bar,": expected variable (e.g. $foo), was ")"') do
++    assert_raises_message(Sass::SyntaxError, 'Invalid CSS after "($bar,": expected variable (e.g. $foo), was ")"') do
+       render(<<SASS)
+ =foo($bar,)
+   bip: bap
+@@ -2876,7 +2876,7 @@ SASS
+   end
+ 
+   def test_comment_like_selector
+-    assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "/": expected identifier, was " foo"') {render(<<SASS)}
++    assert_raises_message(Sass::SyntaxError, 'Invalid CSS after "/": expected identifier, was " foo"') {render(<<SASS)}
+ / foo
+   a: b
+ SASS
+diff --git a/test/sass/exec_test.rb b/test/sass/exec_test.rb
+index 1f3e113..e1550f4 100755
+--- a/test/sass/exec_test.rb
++++ b/test/sass/exec_test.rb
+@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
+ require 'sass/util/test'
+ require 'tmpdir'
+ 
+-class ExecTest < Test::Unit::TestCase
++class ExecTest < Minitest::Test
+   include Sass::Util::Test
+ 
+   def setup
+diff --git a/test/sass/extend_test.rb b/test/sass/extend_test.rb
+index 0572eff..5891790 100755
+--- a/test/sass/extend_test.rb
++++ b/test/sass/extend_test.rb
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env ruby
+ require File.dirname(__FILE__) + '/../test_helper'
+ 
+-class ExtendTest < Test::Unit::TestCase
++class ExtendTest < Minitest::Test
+   def test_basic
+     assert_equal <<CSS, render(<<SCSS)
+ .foo, .bar {
+@@ -516,7 +516,7 @@ SCSS
+   end
+ 
+   def test_nested_extender_with_trailing_child_selector
+-    assert_raise(Sass::SyntaxError, "bar > can't extend: invalid selector") do
++    assert_raises(Sass::SyntaxError, "bar > can't extend: invalid selector") do
+       render("bar > {@extend .baz}")
+     end
+   end
+@@ -841,7 +841,7 @@ SCSS
+   end
+ 
+   def test_extend_out_of_media
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ You may not @extend an outer selector from within @media.
+ You may only @extend selectors within the same directive.
+ From "@extend .foo" on line 3 of test_extend_out_of_media_inline.scss.
+@@ -854,7 +854,7 @@ SCSS
+   end
+ 
+   def test_extend_out_of_unknown_directive
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ You may not @extend an outer selector from within @flooblehoof.
+ You may only @extend selectors within the same directive.
+ From "@extend .foo" on line 3 of test_extend_out_of_unknown_directive_inline.scss.
+@@ -867,7 +867,7 @@ SCSS
+   end
+ 
+   def test_extend_out_of_nested_directives
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ You may not @extend an outer selector from within @flooblehoof.
+ You may only @extend selectors within the same directive.
+ From "@extend .foo" on line 4 of test_extend_out_of_nested_directives_inline.scss.
+@@ -961,7 +961,7 @@ SCSS
+   end
+ 
+   def test_extend_within_and_without_media
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ You may not @extend an outer selector from within @media.
+ You may only @extend selectors within the same directive.
+ From "@extend .foo" on line 4 of test_extend_within_and_without_media_inline.scss.
+@@ -975,7 +975,7 @@ SCSS
+   end
+ 
+   def test_extend_within_and_without_unknown_directive
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ You may not @extend an outer selector from within @flooblehoof.
+ You may only @extend selectors within the same directive.
+ From "@extend .foo" on line 4 of test_extend_within_and_without_unknown_directive_inline.scss.
+@@ -989,7 +989,7 @@ SCSS
+   end
+ 
+   def test_extend_within_and_without_nested_directives
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ You may not @extend an outer selector from within @flooblehoof.
+ You may only @extend selectors within the same directive.
+ From "@extend .foo" on line 5 of test_extend_within_and_without_nested_directives_inline.scss.
+@@ -1063,7 +1063,7 @@ SCSS
+   end
+ 
+   def test_extend_warns_when_extendee_doesnt_exist
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ ".foo" failed to @extend ".bar".
+ The selector ".bar" was not found.
+ Use "@extend .bar !optional" if the extend should be able to fail.
+@@ -1073,7 +1073,7 @@ SCSS
+   end
+ 
+   def test_extend_warns_when_extension_fails
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {render(<<SCSS)}
+ "b.foo" failed to @extend ".bar".
+ No selectors matching ".bar" could be unified with "b.foo".
+ Use "@extend .bar !optional" if the extend should be able to fail.
+@@ -1401,7 +1401,7 @@ SCSS
+         "No selectors matching \"#{target}\" could be unified with \"#{extender}\"."
+       end
+ 
+-    assert_raise_message(Sass::SyntaxError, <<ERR) {yield}
++    assert_raises_message(Sass::SyntaxError, <<ERR) {yield}
+ #{message}
+ #{reason}
+ Use "@extend #{target} !optional" if the extend should be able to fail.
+diff --git a/test/sass/functions_test.rb b/test/sass/functions_test.rb
+index ef5f20a..173d5e5 100755
+--- a/test/sass/functions_test.rb
++++ b/test/sass/functions_test.rb
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env ruby
+-require 'test/unit'
++require 'minitest/autorun'
+ require File.dirname(__FILE__) + '/../test_helper'
+ require File.dirname(__FILE__) + '/test_helper'
+ require 'sass/script'
+@@ -45,7 +45,7 @@ module Sass::Script::Functions
+   include Sass::Script::Functions::UserFunctions
+ end
+ 
+-class SassFunctionTest < Test::Unit::TestCase
++class SassFunctionTest < Minitest::Test
+   # Tests taken from:
+   #   http://www.w3.org/Style/CSS/Test/CSS3/Color/20070927/html4/t040204-hsl-h-rotating-b.htm
+   #   http://www.w3.org/Style/CSS/Test/CSS3/Color/20070927/html4/t040204-hsl-values-b.htm
+diff --git a/test/sass/importer_test.rb b/test/sass/importer_test.rb
+index 304efb3..4b1283a 100755
+--- a/test/sass/importer_test.rb
++++ b/test/sass/importer_test.rb
+@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/test_helper'
+ require 'mock_importer'
+ require 'sass/plugin'
+ 
+-class ImporterTest < Test::Unit::TestCase
++class ImporterTest < Minitest::Test
+ 
+   class FruitImporter < Sass::Importers::Base
+     def find(name, context = nil)
+@@ -372,7 +372,7 @@ JSON
+   def test_render_with_sourcemap_requires_filename
+     file_system_importer = Sass::Importers::Filesystem.new('.')
+     engine = Sass::Engine.new(".foo {a: b}", :syntax => :scss, :importer => file_system_importer)
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE) {engine.render_with_sourcemap('sourcemap_url')}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE) {engine.render_with_sourcemap('sourcemap_url')}
+ Error generating source map: couldn't determine public URL for the source stylesheet.
+   No filename is available so there's nothing for the source map to link to.
+ MESSAGE
+@@ -380,7 +380,7 @@ MESSAGE
+ 
+   def test_render_with_sourcemap_requires_importer_with_public_url
+     class_importer = ClassImporter.new({"pear" => "color: green;"}, {"pear" => Time.now})
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE) {class_importer.find("pear", {}).render_with_sourcemap('sourcemap_url')}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE) {class_importer.find("pear", {}).render_with_sourcemap('sourcemap_url')}
+ Error generating source map: couldn't determine public URL for "pear".
+   Without a public URL, there's nothing for the source map to link to.
+   Custom importers should define the #public_url method.
+diff --git a/test/sass/logger_test.rb b/test/sass/logger_test.rb
+index 7e0811d..e9779e1 100755
+--- a/test/sass/logger_test.rb
++++ b/test/sass/logger_test.rb
+@@ -2,7 +2,7 @@
+ require File.dirname(__FILE__) + '/../test_helper'
+ require 'pathname'
+ 
+-class LoggerTest < Test::Unit::TestCase
++class LoggerTest < Minitest::Test
+ 
+   class InterceptedLogger < Sass::Logger::Base
+ 
+diff --git a/test/sass/plugin_test.rb b/test/sass/plugin_test.rb
+index 749bb1c..817f43e 100755
+--- a/test/sass/plugin_test.rb
++++ b/test/sass/plugin_test.rb
+@@ -17,7 +17,7 @@ module Sass::Script::Functions
+   end
+ end
+ 
+-class SassPluginTest < Test::Unit::TestCase
++class SassPluginTest < Minitest::Test
+   @@templates = %w{
+     complex script parent_ref import scss_import alt
+     subdir/subdir subdir/nested_subdir/nested_subdir
+@@ -183,7 +183,7 @@ CSS
+     Sass::Plugin.options[:full_exception] = false
+ 
+     File.delete(tempfile_loc('bork1'))
+-    assert_raise(Sass::SyntaxError) {check_for_updates!}
++    assert_raises(Sass::SyntaxError) {check_for_updates!}
+   ensure
+     Sass::Plugin.options[:full_exception] = old_full_exception
+   end
+diff --git a/test/sass/script_conversion_test.rb b/test/sass/script_conversion_test.rb
+index a180009..930d916 100755
+--- a/test/sass/script_conversion_test.rb
++++ b/test/sass/script_conversion_test.rb
+@@ -3,7 +3,7 @@
+ require File.dirname(__FILE__) + '/../test_helper'
+ require 'sass/engine'
+ 
+-class SassScriptConversionTest < Test::Unit::TestCase
++class SassScriptConversionTest < Minitest::Test
+   def test_bool
+     assert_renders "true"
+     assert_renders "false"
+diff --git a/test/sass/script_test.rb b/test/sass/script_test.rb
+index 97c7ca9..8525885 100755
+--- a/test/sass/script_test.rb
++++ b/test/sass/script_test.rb
+@@ -17,17 +17,17 @@ module Sass::Script::Functions
+   include Sass::Script::Functions::UserFunctions
+ end
+ 
+-class SassScriptTest < Test::Unit::TestCase
++class SassScriptTest < Minitest::Test
+   include Sass::Script
+ 
+   def test_color_checks_input
+-    assert_raise_message(ArgumentError, "Blue value -1 must be between 0 and 255") {Sass::Script::Value::Color.new([1, 2, -1])}
+-    assert_raise_message(ArgumentError, "Red value 256 must be between 0 and 255") {Sass::Script::Value::Color.new([256, 2, 3])}
++    assert_raises_message(ArgumentError, "Blue value -1 must be between 0 and 255") {Sass::Script::Value::Color.new([1, 2, -1])}
++    assert_raises_message(ArgumentError, "Red value 256 must be between 0 and 255") {Sass::Script::Value::Color.new([256, 2, 3])}
+   end
+ 
+   def test_color_checks_rgba_input
+-    assert_raise_message(ArgumentError, "Alpha channel 1.1 must be between 0 and 1") {Sass::Script::Value::Color.new([1, 2, 3, 1.1])}
+-    assert_raise_message(ArgumentError, "Alpha channel -0.1 must be between 0 and 1") {Sass::Script::Value::Color.new([1, 2, 3, -0.1])}
++    assert_raises_message(ArgumentError, "Alpha channel 1.1 must be between 0 and 1") {Sass::Script::Value::Color.new([1, 2, 3, 1.1])}
++    assert_raises_message(ArgumentError, "Alpha channel -0.1 must be between 0 and 1") {Sass::Script::Value::Color.new([1, 2, 3, -0.1])}
+   end
+ 
+   def test_string_escapes
+@@ -67,13 +67,13 @@ class SassScriptTest < Test::Unit::TestCase
+     assert_equal "rgba(50, 50, 100, 0.35)", resolve("rgba(1, 1, 2, 0.35) * rgba(50, 50, 50, 0.35)")
+     assert_equal "rgba(52, 52, 52, 0.25)", resolve("rgba(2, 2, 2, 0.25) + rgba(50, 50, 50, 0.25)")
+ 
+-    assert_raise_message(Sass::SyntaxError, "Alpha channels must be equal: rgba(1, 2, 3, 0.15) + rgba(50, 50, 50, 0.75)") do
++    assert_raises_message(Sass::SyntaxError, "Alpha channels must be equal: rgba(1, 2, 3, 0.15) + rgba(50, 50, 50, 0.75)") do
+       resolve("rgba(1, 2, 3, 0.15) + rgba(50, 50, 50, 0.75)")
+     end
+-    assert_raise_message(Sass::SyntaxError, "Alpha channels must be equal: #123456 * rgba(50, 50, 50, 0.75)") do
++    assert_raises_message(Sass::SyntaxError, "Alpha channels must be equal: #123456 * rgba(50, 50, 50, 0.75)") do
+       resolve("#123456 * rgba(50, 50, 50, 0.75)")
+     end
+-    assert_raise_message(Sass::SyntaxError, "Alpha channels must be equal: rgba(50, 50, 50, 0.75) / #123456") do
++    assert_raises_message(Sass::SyntaxError, "Alpha channels must be equal: rgba(50, 50, 50, 0.75) / #123456") do
+       resolve("rgba(50, 50, 50, 0.75) / #123456")
+     end
+   end
+@@ -344,33 +344,33 @@ SASS
+   end
+ 
+   def test_null_ops
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null plus 1".') {eval("null + 1")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null minus 1".') {eval("null - 1")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null times 1".') {eval("null * 1")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null div 1".') {eval("null / 1")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null mod 1".') {eval("null % 1")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "1 plus null".') {eval("1 + null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "1 minus null".') {eval("1 - null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "1 times null".') {eval("1 * null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "1 div null".') {eval("1 / null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "1 mod null".') {eval("1 % null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "1 gt null".') {eval("1 > null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null lt 1".') {eval("null < 1")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: "null plus null".') {eval("null + null")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid null operation: ""foo" plus null".') {eval("foo + null")}
+   end
+ 
+@@ -463,15 +463,15 @@ SASS
+   end
+ 
+   def test_colors_with_wrong_number_of_digits
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       "Colors must have either three or six digits: '#0'") {eval("#0")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       "Colors must have either three or six digits: '#12'") {eval("#12")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       "Colors must have either three or six digits: '#abcd'") {eval("#abcd")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       "Colors must have either three or six digits: '#abcdE'") {eval("#abcdE")}
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       "Colors must have either three or six digits: '#abcdEFA'") {eval("#abcdEFA")}
+   end
+ 
+@@ -485,8 +485,8 @@ SASS
+     assert_equal "1 2 3", resolve("1 2 () 3")
+     assert_equal "1 2 3", resolve("1 2 3 ()")
+     assert_equal "1 2 3", resolve("() 1 2 3")
+-    assert_raise_message(Sass::SyntaxError, "() isn't a valid CSS value.") {resolve("()")}
+-    assert_raise_message(Sass::SyntaxError, "() isn't a valid CSS value.") {resolve("nth(append((), ()), 1)")}
++    assert_raises_message(Sass::SyntaxError, "() isn't a valid CSS value.") {resolve("()")}
++    assert_raises_message(Sass::SyntaxError, "() isn't a valid CSS value.") {resolve("nth(append((), ()), 1)")}
+   end
+ 
+   def test_list_with_nulls
+@@ -511,19 +511,19 @@ SASS
+   end
+ 
+   def test_map_cannot_have_duplicate_keys
+-    assert_raise_message(Sass::SyntaxError, 'Duplicate key "foo" in map (foo: bar, foo: baz).') do
++    assert_raises_message(Sass::SyntaxError, 'Duplicate key "foo" in map (foo: bar, foo: baz).') do
+       eval("(foo: bar, foo: baz)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Duplicate key "foo" in map (foo: bar, fo + o: baz).') do
++    assert_raises_message(Sass::SyntaxError, 'Duplicate key "foo" in map (foo: bar, fo + o: baz).') do
+       eval("(foo: bar, fo + o: baz)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Duplicate key "foo" in map (foo: bar, "foo": baz).') do
++    assert_raises_message(Sass::SyntaxError, 'Duplicate key "foo" in map (foo: bar, "foo": baz).') do
+       eval("(foo: bar, 'foo': baz)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Duplicate key 2px in map (2px: bar, 1px + 1px: baz).') do
++    assert_raises_message(Sass::SyntaxError, 'Duplicate key 2px in map (2px: bar, 1px + 1px: baz).') do
+       eval("(2px: bar, 1px + 1px: baz)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Duplicate key #0000ff in map (blue: bar, blue: baz).') do
++    assert_raises_message(Sass::SyntaxError, 'Duplicate key #0000ff in map (blue: bar, blue: baz).') do
+       eval("(blue: bar, #00f: baz)")
+     end
+   end
+@@ -537,16 +537,16 @@ SASS
+   end
+ 
+   def test_map_syntax_errors
+-    assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "(foo:": expected expression (e.g. 1px, bold), was ")"') do
++    assert_raises_message(Sass::SyntaxError, 'Invalid CSS after "(foo:": expected expression (e.g. 1px, bold), was ")"') do
+       eval("(foo:)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "(": expected ")", was ":bar)"') do
++    assert_raises_message(Sass::SyntaxError, 'Invalid CSS after "(": expected ")", was ":bar)"') do
+       eval("(:bar)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "(foo, bar": expected ")", was ": baz)"') do
++    assert_raises_message(Sass::SyntaxError, 'Invalid CSS after "(foo, bar": expected ")", was ": baz)"') do
+       eval("(foo, bar: baz)")
+     end
+-    assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "(foo: bar, baz": expected ":", was ")"') do
++    assert_raises_message(Sass::SyntaxError, 'Invalid CSS after "(foo: bar, baz": expected ":", was ")"') do
+       eval("(foo: bar, baz)")
+     end
+   end
+@@ -558,11 +558,11 @@ SASS
+     return if RUBY_PLATFORM =~ /java/
+ 
+     # Don't validate the message; it's different on Rubinius.
+-    assert_raise(ArgumentError) {resolve("arg-error()")}
++    assert_raises(ArgumentError) {resolve("arg-error()")}
+   end
+ 
+   def test_shallow_argument_error_unwrapped
+-    assert_raise_message(Sass::SyntaxError, "wrong number of arguments (1 for 0) for `arg-error'") {resolve("arg-error(1)")}
++    assert_raises_message(Sass::SyntaxError, "wrong number of arguments (1 for 0) for `arg-error'") {resolve("arg-error(1)")}
+   end
+ 
+   def test_boolean_ops_short_circuit
+@@ -746,7 +746,7 @@ end
+   end
+ 
+   def test_misplaced_comma_in_funcall
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid CSS after "foo(bar, ": expected function argument, was ")"') {eval('foo(bar, )')}
+   end
+ 
+diff --git a/test/sass/scss/css_test.rb b/test/sass/scss/css_test.rb
+index b9a6d69..cb15edc 100755
+--- a/test/sass/scss/css_test.rb
++++ b/test/sass/scss/css_test.rb
+@@ -6,7 +6,7 @@ require 'sass/scss/css_parser'
+ # These tests just test the parsing of CSS
+ # (both standard and any hacks we intend to support).
+ # Tests of SCSS-specific behavior go in scss_test.rb.
+-class ScssCssTest < Test::Unit::TestCase
++class ScssCssTest < Minitest::Test
+   include ScssTestHelper
+ 
+   def test_basic_scss
+@@ -1030,7 +1030,7 @@ SCSS
+   end
+ 
+   def test_long_unclosed_comment_doesnt_take_forever
+-    assert_raise_message(Sass::SyntaxError,
++    assert_raises_message(Sass::SyntaxError,
+       'Invalid CSS after "/*": expected "/", was "//*************..."') {render(<<SCSS)}
+ /*
+ //**************************************************************************
+diff --git a/test/sass/scss/rx_test.rb b/test/sass/scss/rx_test.rb
+index e5cb59a..d5390e6 100755
+--- a/test/sass/scss/rx_test.rb
++++ b/test/sass/scss/rx_test.rb
+@@ -3,7 +3,7 @@
+ require File.dirname(__FILE__) + '/../../test_helper'
+ require 'sass/engine'
+ 
+-class ScssRxTest < Test::Unit::TestCase
++class ScssRxTest < Minitest::Test
+   include Sass::SCSS::RX
+ 
+   def test_identifiers
+diff --git a/test/sass/scss/scss_test.rb b/test/sass/scss/scss_test.rb
+index 45b1ba9..cf4fad8 100755
+--- a/test/sass/scss/scss_test.rb
++++ b/test/sass/scss/scss_test.rb
+@@ -2,7 +2,7 @@
+ # -*- coding: utf-8 -*-
+ require File.dirname(__FILE__) + '/test_helper'
+ 
+-class ScssTest < Test::Unit::TestCase
++class ScssTest < Minitest::Test
+   include ScssTestHelper
+ 
+   ## One-Line Comments
+@@ -1342,7 +1342,7 @@ SCSS
+   end
+ 
+   def test_mixin_conflicting_splat_after_keyword_args
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Mixin foo was passed argument $b both by position and by name.
+ MESSAGE
+ @mixin foo($a, $b, $c) {
+@@ -1358,7 +1358,7 @@ SCSS
+   end
+ 
+   def test_mixin_keyword_splat_must_have_string_keys
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Variable keyword argument map must have string keys.
+ 12 is not a string in (12: 1).
+ MESSAGE
+@@ -1371,7 +1371,7 @@ SCSS
+   end
+ 
+   def test_mixin_positional_arg_after_splat
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Only keyword arguments may follow variable arguments (...).
+ MESSAGE
+ @mixin foo($a, $b, $c) {
+@@ -1387,7 +1387,7 @@ SCSS
+   end
+ 
+   def test_mixin_var_args_with_keyword
+-    assert_raise_message(Sass::SyntaxError, "Positional arguments must come before keyword arguments.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Positional arguments must come before keyword arguments.") {render <<SCSS}
+ @mixin foo($a, $b...) {
+   a: $a;
+   b: $b;
+@@ -1398,7 +1398,7 @@ SCSS
+   end
+ 
+   def test_mixin_keyword_for_var_arg
+-    assert_raise_message(Sass::SyntaxError, "Argument $b of mixin foo cannot be used as a named argument.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Argument $b of mixin foo cannot be used as a named argument.") {render <<SCSS}
+ @mixin foo($a, $b...) {
+   a: $a;
+   b: $b;
+@@ -1409,7 +1409,7 @@ SCSS
+   end
+ 
+   def test_mixin_keyword_for_unknown_arg_with_var_args
+-    assert_raise_message(Sass::SyntaxError, "Mixin foo doesn't have an argument named $c.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Mixin foo doesn't have an argument named $c.") {render <<SCSS}
+ @mixin foo($a, $b...) {
+   a: $a;
+   b: $b;
+@@ -1420,7 +1420,7 @@ SCSS
+   end
+ 
+   def test_mixin_map_splat_before_list_splat
+-    assert_raise_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was (2 3)).") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was (2 3)).") {render <<SCSS}
+ @mixin foo($a, $b, $c) {
+   a: $a;
+   b: $b;
+@@ -1434,7 +1434,7 @@ SCSS
+   end
+ 
+   def test_mixin_map_splat_with_unknown_keyword
+-    assert_raise_message(Sass::SyntaxError, "Mixin foo doesn't have an argument named $c.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Mixin foo doesn't have an argument named $c.") {render <<SCSS}
+ @mixin foo($a, $b) {
+   a: $a;
+   b: $b;
+@@ -1447,7 +1447,7 @@ SCSS
+   end
+ 
+   def test_mixin_map_splat_with_wrong_type
+-    assert_raise_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was 12).") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was 12).") {render <<SCSS}
+ @mixin foo($a, $b) {
+   a: $a;
+   b: $b;
+@@ -1761,7 +1761,7 @@ SCSS
+   end
+ 
+   def test_function_conflicting_splat_after_keyword_args
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Function foo was passed argument $b both by position and by name.
+ MESSAGE
+ @function foo($a, $b, $c) {
+@@ -1775,7 +1775,7 @@ SCSS
+   end
+ 
+   def test_function_positional_arg_after_splat
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Only keyword arguments may follow variable arguments (...).
+ MESSAGE
+ @function foo($a, $b, $c) {
+@@ -1789,7 +1789,7 @@ SCSS
+   end
+ 
+   def test_function_var_args_with_keyword
+-    assert_raise_message(Sass::SyntaxError, "Positional arguments must come before keyword arguments.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Positional arguments must come before keyword arguments.") {render <<SCSS}
+ @function foo($a, $b...) {
+   @return "a: \#{$a}, b: \#{$b}";
+ }
+@@ -1799,7 +1799,7 @@ SCSS
+   end
+ 
+   def test_function_keyword_for_var_arg
+-    assert_raise_message(Sass::SyntaxError, "Argument $b of function foo cannot be used as a named argument.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Argument $b of function foo cannot be used as a named argument.") {render <<SCSS}
+ @function foo($a, $b...) {
+   @return "a: \#{$a}, b: \#{$b}";
+ }
+@@ -1809,7 +1809,7 @@ SCSS
+   end
+ 
+   def test_function_keyword_for_unknown_arg_with_var_args
+-    assert_raise_message(Sass::SyntaxError, "Function foo doesn't have an argument named $c.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Function foo doesn't have an argument named $c.") {render <<SCSS}
+ @function foo($a, $b...) {
+   @return "a: \#{$a}, b: \#{length($b)}";
+ }
+@@ -1832,7 +1832,7 @@ SCSS
+   end
+ 
+   def test_function_map_splat_before_list_splat
+-    assert_raise_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was (2 3)).") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was (2 3)).") {render <<SCSS}
+ @function foo($a, $b, $c) {
+   @return "a: \#{$a}, b: \#{$b}, c: \#{$c}";
+ }
+@@ -1844,7 +1844,7 @@ SCSS
+   end
+ 
+   def test_function_map_splat_with_unknown_keyword
+-    assert_raise_message(Sass::SyntaxError, "Function foo doesn't have an argument named $c.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Function foo doesn't have an argument named $c.") {render <<SCSS}
+ @function foo($a, $b) {
+   @return "a: \#{$a}, b: \#{$b}";
+ }
+@@ -1856,7 +1856,7 @@ SCSS
+   end
+ 
+   def test_function_map_splat_with_wrong_type
+-    assert_raise_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was 12).") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Variable keyword arguments must be a map (was 12).") {render <<SCSS}
+ @function foo($a, $b) {
+   @return "a: \#{$a}, b: \#{$b}";
+ }
+@@ -1868,7 +1868,7 @@ SCSS
+   end
+ 
+   def test_function_keyword_splat_must_have_string_keys
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Variable keyword argument map must have string keys.
+ 12 is not a string in (12: 1).
+ MESSAGE
+@@ -3041,7 +3041,7 @@ SCSS
+   end
+ 
+   def test_parent_in_mid_selector_error
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Invalid CSS after "  .foo": expected "{", was "&.bar {a: b}"
+ 
+ "&.bar" may only be used at the beginning of a compound selector.
+@@ -3053,7 +3053,7 @@ SCSS
+   end
+ 
+   def test_parent_after_selector_error
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Invalid CSS after "  .foo.bar": expected "{", was "& {a: b}"
+ 
+ "&" may only be used at the beginning of a compound selector.
+@@ -3065,7 +3065,7 @@ SCSS
+   end
+ 
+   def test_double_parent_selector_error
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Invalid CSS after "  &": expected "{", was "& {a: b}"
+ 
+ "&" may only be used at the beginning of a compound selector.
+@@ -3077,7 +3077,7 @@ SCSS
+   end
+ 
+   def test_no_lonely_else
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Invalid CSS: @else must come after @if
+ MESSAGE
+ @else {foo: bar}
+@@ -3085,7 +3085,7 @@ SCSS
+   end
+ 
+   def test_failed_parent_selector_with_suffix
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Invalid parent selector for "&-bar": "*"
+ MESSAGE
+ * {
+@@ -3093,7 +3093,7 @@ MESSAGE
+ }
+ SCSS
+ 
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Invalid parent selector for "&-bar": "[foo=bar]"
+ MESSAGE
+ [foo=bar] {
+@@ -3101,7 +3101,7 @@ MESSAGE
+ }
+ SCSS
+ 
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Invalid parent selector for "&-bar": "::nth-child(2n+1)"
+ MESSAGE
+ ::nth-child(2n+1) {
+@@ -3109,7 +3109,7 @@ MESSAGE
+ }
+ SCSS
+ 
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Invalid parent selector for "&-bar": ":not(.foo)"
+ MESSAGE
+ :not(.foo) {
+@@ -3117,7 +3117,7 @@ MESSAGE
+ }
+ SCSS
+ 
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Invalid parent selector for "&-bar": ".foo +"
+ MESSAGE
+ .foo + {
+@@ -3127,7 +3127,7 @@ SCSS
+   end
+ 
+   def test_empty_media_query_error
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render(<<SCSS)}
+ Invalid CSS after "": expected media query list, was ""
+ MESSAGE
+ @media \#{""} {
+@@ -3293,7 +3293,7 @@ SCSS
+   end
+ 
+   def test_extra_comma_in_mixin_arglist_error
+-    assert_raise_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, <<MESSAGE.rstrip) {render <<SCSS}
+ Invalid CSS after "...clude foo(bar, ": expected mixin argument, was ");"
+ MESSAGE
+ @mixin foo($a1, $a2) {
+@@ -3372,7 +3372,7 @@ SCSS
+   end
+ 
+   def test_unknown_keyword_arg_raises_error
+-    assert_raise_message(Sass::SyntaxError, "Mixin a doesn't have an argument named $c.") {render <<SCSS}
++    assert_raises_message(Sass::SyntaxError, "Mixin a doesn't have an argument named $c.") {render <<SCSS}
+ @mixin a($b: 1) { a: $b; }
+ div { @include a(1, $c: 3); }
+ SCSS
+@@ -3393,7 +3393,7 @@ SCSS
+   end
+ 
+   def test_if_error_line
+-    assert_raise_line(2) {render(<<SCSS)}
++    assert_raises_line(2) {render(<<SCSS)}
+ @if true {foo: bar}
+ }
+ SCSS
+diff --git a/test/sass/source_map_test.rb b/test/sass/source_map_test.rb
+index 5248d91..177cda7 100755
+--- a/test/sass/source_map_test.rb
++++ b/test/sass/source_map_test.rb
+@@ -3,12 +3,12 @@
+ require File.dirname(__FILE__) + '/../test_helper'
+ require File.dirname(__FILE__) + '/test_helper'
+ 
+-class SourcemapTest < Test::Unit::TestCase
++class SourcemapTest < Minitest::Test
+   def test_to_json_requires_args
+     _, sourcemap = render_with_sourcemap('')
+-    assert_raise(ArgumentError) {sourcemap.to_json({})}
+-    assert_raise(ArgumentError) {sourcemap.to_json({:css_path => 'foo'})}
+-    assert_raise(ArgumentError) {sourcemap.to_json({:sourcemap_path => 'foo'})}
++    assert_raises(ArgumentError) {sourcemap.to_json({})}
++    assert_raises(ArgumentError) {sourcemap.to_json({:css_path => 'foo'})}
++    assert_raises(ArgumentError) {sourcemap.to_json({:sourcemap_path => 'foo'})}
+   end
+ 
+   def test_simple_mapping_scss
+diff --git a/test/sass/test_helper.rb b/test/sass/test_helper.rb
+index 919806e..d5a4d12 100644
+--- a/test/sass/test_helper.rb
++++ b/test/sass/test_helper.rb
+@@ -1,7 +1,7 @@
+ test_dir = File.dirname(__FILE__)
+ $:.unshift test_dir unless $:.include?(test_dir)
+ 
+-class Test::Unit::TestCase
++class Minitest::Test
+   def absolutize(file)
+     File.expand_path("#{File.dirname(__FILE__)}/#{file}")
+   end
+diff --git a/test/sass/util/multibyte_string_scanner_test.rb b/test/sass/util/multibyte_string_scanner_test.rb
+index bc0db14..5d56e4f 100755
+--- a/test/sass/util/multibyte_string_scanner_test.rb
++++ b/test/sass/util/multibyte_string_scanner_test.rb
+@@ -3,7 +3,7 @@
+ require File.dirname(__FILE__) + '/../../test_helper'
+ 
+ unless Sass::Util.ruby1_8?
+-  class MultibyteStringScannerTest < Test::Unit::TestCase
++  class MultibyteStringScannerTest < Minitest::Test
+     def setup
+       @scanner = Sass::Util::MultibyteStringScanner.new("cölorfül")
+     end
+diff --git a/test/sass/util/normalized_map_test.rb b/test/sass/util/normalized_map_test.rb
+index aa16113..9860c78 100755
+--- a/test/sass/util/normalized_map_test.rb
++++ b/test/sass/util/normalized_map_test.rb
+@@ -2,7 +2,7 @@
+ require File.dirname(__FILE__) + '/../../test_helper'
+ require 'sass/util/normalized_map'
+ 
+-class NormalizedMapTest < Test::Unit::TestCase
++class NormalizedMapTest < Minitest::Test
+   extend PublicApiLinter
+ 
+   lint_api Hash, Sass::Util::NormalizedMap
+@@ -13,7 +13,7 @@ class NormalizedMapTest < Test::Unit::TestCase
+ 
+   def test_normalized_map_errors_unless_explicitly_implemented
+     assert Sass.tests_running
+-    assert_raise_message(ArgumentError, "The method invert must be implemented explicitly") do
++    assert_raises_message(ArgumentError, "The method invert must be implemented explicitly") do
+       Sass::Util::NormalizedMap.new.invert
+     end
+   end
+diff --git a/test/sass/util/subset_map_test.rb b/test/sass/util/subset_map_test.rb
+index b595394..57698a2 100755
+--- a/test/sass/util/subset_map_test.rb
++++ b/test/sass/util/subset_map_test.rb
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env ruby
+ require File.dirname(__FILE__) + '/../../test_helper'
+ 
+-class SubsetMapTest < Test::Unit::TestCase
++class SubsetMapTest < Minitest::Test
+   def setup
+     @ssm = Sass::Util::SubsetMap.new
+     @ssm[Set[1, 2]] = "Foo"
+@@ -44,7 +44,7 @@ class SubsetMapTest < Test::Unit::TestCase
+   end
+ 
+   def test_empty_key_set
+-    assert_raise(ArgumentError) {@ssm[Set[]] = "Fail"}
++    assert_raises(ArgumentError) {@ssm[Set[]] = "Fail"}
+   end
+ 
+   def test_empty_key_get
+diff --git a/test/sass/util_test.rb b/test/sass/util_test.rb
+index 5a33c53..e15bc2a 100755
+--- a/test/sass/util_test.rb
++++ b/test/sass/util_test.rb
+@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
+ require 'pathname'
+ require 'tmpdir'
+ 
+-class UtilTest < Test::Unit::TestCase
++class UtilTest < Minitest::Test
+   include Sass::Util
+ 
+   def test_scope
+@@ -341,7 +341,7 @@ class UtilTest < Test::Unit::TestCase
+   end
+ 
+   def test_abstract
+-    assert_raise_message(NotImplementedError,
++    assert_raises_message(NotImplementedError,
+       "UtilTest::FooBar must implement #foo") {FooBar.new.foo}
+   end
+ 
+diff --git a/test/sass/value_helpers_test.rb b/test/sass/value_helpers_test.rb
+index 1141b8f..fdd82c0 100755
+--- a/test/sass/value_helpers_test.rb
++++ b/test/sass/value_helpers_test.rb
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env ruby
+ require File.dirname(__FILE__) + '/../test_helper'
+ 
+-class ValueHelpersTest < Test::Unit::TestCase
++class ValueHelpersTest < Minitest::Test
+   include Sass::Script
+   include Sass::Script::Value::Helpers
+ 
+diff --git a/test/test_helper.rb b/test/test_helper.rb
+index 31d3f84..3388497 100644
+--- a/test/test_helper.rb
++++ b/test/test_helper.rb
+@@ -1,6 +1,6 @@
+ lib_dir = File.dirname(__FILE__) + '/../lib'
+ 
+-require 'test/unit'
++require 'minitest/autorun'
+ require 'fileutils'
+ $:.unshift lib_dir unless $:.include?(lib_dir)
+ require 'sass'
+@@ -22,7 +22,7 @@ module Sass::Script::Functions
+   end
+ end
+ 
+-class Test::Unit::TestCase
++class Minitest::Test
+   def munge_filename(opts = {})
+     opts[:filename] ||= filename_for_test(opts[:syntax] || :sass)
+     opts[:sourcemap_filename] ||= sourcemap_filename_for_test
+@@ -76,7 +76,7 @@ class Test::Unit::TestCase
+     Sass::Util.silence_warnings(&block)
+   end
+ 
+-  def assert_raise_message(klass, message)
++  def assert_raises_message(klass, message)
+     yield
+   rescue Exception => e
+     assert_instance_of(klass, e)
+@@ -85,13 +85,23 @@ class Test::Unit::TestCase
+     flunk "Expected exception #{klass}, none raised"
+   end
+ 
+-  def assert_raise_line(line)
++  def assert_raises_line(line)
+     yield
+   rescue Sass::SyntaxError => e
+     assert_equal(line, e.sass_line)
+   else
+     flunk "Expected exception on line #{line}, none raised"
+   end
++
++  def assert_not_equal(exp, act, msg=nil)
++    msg = message(msg) { "<#{mu_pp(exp)}> expected to be != to\n<#{mu_pp(act)}>" }
++    assert(exp != act, msg)
++  end
++
++  def assert_not_nil(exp, msg=nil)
++    msg = message(msg) { "<#{mu_pp(exp)}> expected to not be nil" }
++    assert(!exp.nil?, msg)
++  end
+ end
+ 
+ module PublicApiLinter
